@@ -3,7 +3,10 @@ angular.module('ng-backstretch', []).
 directive('backstretch', ['$window', '$log', function($window, $log) {
   return {
     restrict: 'A',
-    scope: {},
+    scope: {
+        backgroundUrl: '=backstretchUrl'
+    },
+    template: '<div class="backstretch"><img ng-src="{{backgroundUrl}}" /></div>',
     link: function(scope, element, attributes) {
 
         // set some default styles for the wrapper and image
@@ -17,10 +20,10 @@ directive('backstretch', ['$window', '$log', function($window, $log) {
             height: '100%',
             width: '100%',
             zIndex: -999998,
-            position: 'absolute',
+            position: 'fixed'
           },
           image: {
-            position: 'absolute',
+            position: 'fixed',
             display: 'none',
             margin: 0,
             padding: 0,
@@ -29,24 +32,16 @@ directive('backstretch', ['$window', '$log', function($window, $log) {
             height: 'auto',
             maxHeight: 'none',
             maxWidth: 'none',
-            zIndex: -999999,
+            zIndex: -999999
           }
         };
 
-        // create the scope.wrapper element
-        scope.wrapper = angular.element('<div class="backstretch"></div>');
-        scope.wrapper.css(styles.wrapper);
+        element.css(styles.wrapper);
 
-        // create the scope.image element
-        scope.image = angular.element('<img>');
-        scope.image[0].src = attributes.backgroundUrl;
+        scope.image = angular.element(element.find('img'));
         scope.image.css(styles.image);
 
-        // append things to the element requesting element functionality
-        scope.wrapper.append(scope.image);
-        element.append(scope.wrapper);
-
-        scope.load = function(e) {          
+        scope.load = function(e) {
           // figure out what the width:height ratio is
           scope.ratio = this.width / this.height;
 
@@ -89,7 +84,7 @@ directive('backstretch', ['$window', '$log', function($window, $log) {
           background_css.height = background_height + 'px';
 
           // apply the appropriate styles to the wrapper and image
-          scope.wrapper.css({width: root_width, height: root_height});
+          element.css({width: root_width, height: root_height});
           scope.image.css(background_css);
         };
 
